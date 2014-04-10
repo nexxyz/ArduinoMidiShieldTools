@@ -4,15 +4,8 @@
 #include <midi_Settings.h>
 
 #define KNOB1 0
-#define KNOB2 1
-#define BUTTON1 2
-#define BUTTON2 3
-#define BUTTON3 4
 #define STAT1 7
 #define STAT2 6
-#define OFF 1
-#define ON 2
-#define WAIT 3
 #define CHANNEL 1
 
 int clockCount;
