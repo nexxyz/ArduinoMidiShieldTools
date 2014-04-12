@@ -279,7 +279,3 @@ void sendContinue()
 {
   MIDI.send(midi::Continue, 0, 0, 1);
 }
-
-
-
-
