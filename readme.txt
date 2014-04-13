@@ -1,0 +1,1 @@
+A little repo for the tools I write using an Arduino with a MIDI shield. Feel free to use them for your projects!
