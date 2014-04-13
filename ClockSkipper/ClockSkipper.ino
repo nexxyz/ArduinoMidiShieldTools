@@ -27,10 +27,12 @@ What you can do with it:
 ** the red LED will change each time you cross a border between values
 ** the green led will flash with each "outgoing"/slave beat
 * Button 1 (D2) triggers a "resync" of the slave
-** on the next "incoming"/master beat, the slave will be stopped and immediately started
+** the slave will be stopped and started on the next "incoming"/master beat
 ** this is useful if you change between values or get your slave out of sync somehow
-* Button 2 (D3) sends a start message to the slave
-* Button 3 (D4) sends a stop message to the slave
+* Button 2 (D3) sends a start message to the slave - counts remain unaffected, so you can 
+  freely trigger the slave out of sync with the master
+* Button 3 (D4) sends a stop message to the slave - counts remain unaffected, so you can 
+  freely trigger the slave out of sync with the master
 
 That's it.
 
@@ -69,6 +71,7 @@ boolean button2lastState;
 boolean button3lastState;
 boolean knob1lastValue;
 
+// Initialize everything
 void setup()
 {
   pinMode(STAT1,OUTPUT); 
@@ -98,6 +101,7 @@ void setup()
   knob1lastValue = -1;
 }
 
+// Main loop
 void loop()
 {
   processInputs();
@@ -161,15 +165,19 @@ void processKnobs()
   }
 }
 
+// Reset the slave counts and start the slave
 void executeResync()
 {
-  sendStop();
+  clockCount = 0;
+  outClockCount = 0;
   sendStart();
 }
 
+// Schedule a Resync on the next master beat and stop the slave
 void scheduleResync()
 {
   resyncScheduled = true;
+  sendStop();
 }
 
 void HandleClock(void)
@@ -242,12 +250,20 @@ void initializeClockCounts()
 // Forward stop
 void HandleStop(void)
 {
+  // We got a stop from master
+  // So stop the slave
+  // And reset everything
   sendStop();
+  initializeClockCounts();
 }
 
 // Forward start
 void HandleStart(void)
 {
+  // We got a stop from master
+  // So reset everything
+  // And start the slave
+  initializeClockCounts();
   sendStart();
 }
 
@@ -266,13 +282,11 @@ boolean button(int button_num)
 void sendStart()
 {
   MIDI.send(midi::Start, 0, 0, 1);
-  initializeClockCounts();
 }
 
 void sendStop()
 {
   MIDI.send(midi::Stop, 0, 0, 1);
-  initializeClockCounts();
 }
 
 void sendContinue()
